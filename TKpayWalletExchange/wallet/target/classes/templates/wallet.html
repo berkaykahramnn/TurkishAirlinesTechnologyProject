@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Wallet</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <style>
+        body {
+            background-color: rgba(128, 128, 128, 0.5);
+        }
+
+        .error-message {
+            color: red;
+        }
+
+        .success-message {
+            color: green;
+        }
+
+        .placeholder-text {
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Ortala */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* Kart Stili */
+        .card {
+            border-radius: 8px;
+            margin: 10px;
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-title {
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="card-title">Wallet Information</h1>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <tbody>
+                        <tr>
+                            <td>Owner:</td>
+                            <td><span th:text="${wallet.user.username}"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Owner Email:</td>
+                            <td><span th:text="${wallet.user.email}"></span></td>
+                        </tr>
+                        <tr>
+                            <td>Wallet's Currency type:</td>
+                            <td><span th:text="${wallet.currency}"></span></td>
+                        </tr>
+                        <!-- Error message for invalid input -->
+                        <tr th:if="${errorMessage != null}" class="error-message">
+                            <td colspan="2"><p th:text="${errorMessage}"></p></td>
+                        </tr>
+                        <!-- Success message for deposit -->
+                        <tr th:if="${successMessage != null}" class="success-message">
+                            <td colspan="2"><p th:text="${successMessage}"></p></td>
+                        </tr>
+                        <!-- Error message for withdrawal -->
+                        <tr th:if="${withdrawErrorMessage != null}" class="error-message">
+                            <td colspan="2"><p th:text="${withdrawErrorMessage}"></p></td>
+                        </tr>
+                        <!-- Success message for withdrawal -->
+                        <tr th:if="${withdrawSuccessMessage != null}" class="success-message">
+                            <td colspan="2"><p th:text="${withdrawSuccessMessage}"></p></td>
+                        </tr>
+                        <tr>
+                            <td>Balance:</td>
+                            <td><span th:text="${wallet.balance}"></span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <!-- Deposit form -->
+                    <form th:action="@{/deposit/{userId}(userId=${wallet.user.id})}" method="post"
+                          class="form-group d-flex">
+                        <input type="hidden" name="userId" th:value="${wallet.user.id}" />
+                        <div class="input-group">
+                            <label for="depositAmount">Deposit:</label>
+                            <input
+                                    type="number"
+                                    id="depositAmount"
+                                    name="amount"
+                                    step="0.01"
+                                    required
+                                    placeholder="Enter deposit amount"
+                                    class="form-control ml-2 mr-2"
+                                    max="1000000"
+                            />
+                            <button type="submit" class="btn btn-danger">Deposit</button>
+                        </div>
+                    </form>
+                    <small id="depositAmountHelp" class="form-text text-muted">Deposit amount must be greater than 0 and not exceed 1.000.</small>
+                    <!-- Withdraw form -->
+                    <form th:action="@{/withdraw/{userId}(userId=${wallet.user.id})}" method="post"
+                          class="form-group d-flex">
+                        <input type="hidden" name="userId" th:value="${wallet.user.id}" />
+                        <div class="input-group">
+                            <label for="withdrawAmount">Withdraw:</label>
+                            <input
+                                    type="number"
+                                    id="withdrawAmount"
+                                    name="amount"
+                                    step="0.01"
+                                    required
+                                    placeholder="Enter withdrawal amount"
+                                    class="form-control ml-2 mr-2"
+                                    max="1000000"
+                            />
+                            <button type="submit" class="btn btn-danger">Withdraw</button>
+                        </div>
+                    </form>
+                    <small id="withdrawAmountHelp" class="form-text text-muted">Withdrawal amount must be greater than 0 and not exceed 1.000. The withdrawal amount cannot exceed the current balance.</small>
+                </div>
+            </div>
+        </div>
+      <div class="col">
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Exchange Preview</h2>
+          </div>
+          <div class="card-body">
+            <ul>
+              <li th:unless="${wallet.currency == 'USD'}">
+                <span>USD:</span>
+                <span th:text="${wallet.balance * exchangeRates['USD'] * (1 - 0.02)}"></span> <!-- Yeni bakiye (kur dönüşümden sonra) -->
+                <small th:text="'(Commission: ' + ${commissionRate * 100} + '%)'"></small>
+                <form th:action="@{/exchangeConfirmation}" method="get">
+                  <input type="hidden" name="userId" th:value="${wallet.user.id}" />
+                  <input type="hidden" name="currency" value="USD" />
+                  <button type="submit" class="btn btn-danger">Exchange to USD</button>
+                </form>
+              </li>
+              <li th:unless="${wallet.currency == 'EUR'}">
+                <span>EUR:</span>
+                <span th:text="${wallet.balance * exchangeRates['EUR'] * (1 - 0.02)}"></span>
+                <small th:text="'(Commission: ' + ${commissionRate * 100} + '%)'"></small>
+                <form th:action="@{/exchangeConfirmation}" method="get">
+                  <input type="hidden" name="userId" th:value="${wallet.user.id}" />
+                  <input type="hidden" name="currency" value="EUR" />
+                  <button type="submit" class="btn btn-danger">Exchange to EUR</button>
+                </form>
+              </li>
+              <li th:unless="${wallet.currency == 'GBP'}">
+                <span>GBP:</span>
+                <span th:text="${wallet.balance * exchangeRates['GBP'] * (1 - 0.02)}"></span>
+                <small th:text="'(Commission: ' + ${commissionRate * 100} + '%)'"></small>
+                <form th:action="@{/exchangeConfirmation}" method="get">
+                  <input type="hidden" name="userId" th:value="${wallet.user.id}" />
+                  <input type="hidden" name="currency" value="GBP" />
+                  <button type="submit" class="btn btn-danger">Exchange to GBP</button>
+                </form>
+              </li>
+              <li th:unless="${wallet.currency == 'TRY'}">
+                <span>TRY:</span>
+                <span th:text="${wallet.balance * exchangeRates['TRY'] * (1 - 0.02)}"></span>
+                <small th:text="'(Commission: ' + ${commissionRate * 100} + '%)'"></small>
+                <form th:action="@{/exchangeConfirmation}" method="get">
+                  <input type="hidden" name="userId" th:value="${wallet.user.id}" />
+                  <input type="hidden" name="currency" value="TRY" />
+                  <button type="submit" class="btn btn-danger">Exchange to TRY</button>
+                </form>
+              </li>
+              <!-- Diğer para birimleri için benzer yapıları ekleyebilirsiniz -->
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-4">
+      <div class="col text-center">
+        <form th:action="@{/user/{userId}(userId=${wallet.user.id})}" method="get">
+          <button type="submit" class="btn btn-danger">Go to User Page</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

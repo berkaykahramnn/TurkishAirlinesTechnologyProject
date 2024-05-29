@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Register</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="register.css" rel="stylesheet">
+</head>
+<body>
+    <div class="overlay"></div> <!-- Overlay eklemesi -->
+    <div class="register-container">
+        <h1>Register</h1>
+        <form action="/register" method="post" onsubmit="return validateForm()">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="Enter your Username" pattern="[a-zA-Z]{4,10}" title="Username must contain only letters and be between 4 and 10 characters long." required>
+                <small id="usernameHelp" class="form-text text-muted">Username must be between 4 and 10 characters long.</small>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" class="form-control" placeholder="Enter your E-mail" pattern="[^\s@]+@[^\s@]+\.[^\s@]+" title="Please enter a valid email address." required>
+                <small id="emailHelp" class="form-text text-muted">Email must be between 6 and 30 characters long.</small>
+            </div>
+            <div class="form-group">
+                <label for="currency">Currency:</label>
+                <select id="currency" name="currency" class="form-control" required>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="GBP">GBP</option>
+                    <option value="TRY">TRY</option>
+                </select>
+                <small id="currencyHelp" class="form-text text-muted">You can select your wallet's currency type here.</small>
+            </div>
+            <div class="form-group">
+                <label for="balance">Balance:</label>
+                <input type="number" id="balance" name="balance" class="form-control" placeholder="Enter an initial Balance" step="0.01" max="1000000" required>
+                <small id="balanceHelp" class="form-text text-muted">Balance must be greater than 0 and not exceed 1.000.</small>
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        function validateForm() {
+            var usernameInput = document.getElementById("username");
+            var username = usernameInput.value;
+            
+            // Username validation
+            if (!isValidUsername(username)) {
+                alert("Username must contain only letters and be between 4 and 10 characters long.");
+                usernameInput.value = "";
+                return false;
+            }
+            
+            // Email validation
+            var emailInput = document.getElementById("email");
+            var email = emailInput.value;
+            if (!isValidEmail(email)) {
+                alert("Please enter a valid email address.");
+                emailInput.value = "";
+                return false;
+            }
+            
+            // Balance validation
+            var balanceInput = document.getElementById("balance");
+            var balance = parseFloat(balanceInput.value);
+            if (balance <= 0) {
+                alert("Balance must be greater than 0.");
+                balanceInput.value = "";
+                return false;
+            }
+            if (balance > 1000000) {
+                alert("Balance must not exceed 1.000.");
+                balanceInput.value = "";
+                return false;
+            }
+            
+            // Check if the username is already taken
+            var existingUsernames = ["existingUsername1", "existingUsername2"]; // Replace with actual usernames from the backend
+            if (existingUsernames.includes(username)) {
+                alert("Username is already taken. Please choose a different one.");
+                usernameInput.value = "";
+                return false;
+            }
+            
+            // Check if the email is already registered
+            var existingEmails = ["existingEmail1@example.com", "existingEmail2@example.com"]; // Replace with actual emails from the backend
+            if (existingEmails.includes(email)) {
+                alert("This email is already registered. Please use a different one.");
+                emailInput.value = "";
+                return false;
+            }
+            
+            return true;
+        }
+        
+        function isValidUsername(username) {
+            var regex = /^[a-zA-Z]{4,10}$/;
+            return regex.test(username);
+        }
+        
+        function isValidEmail(email) {
+            var regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email) {
+                return false; // Boş e-posta adresi
+            }
+            if (email.length < 5 || email.length > 30) {
+                return false; // E-posta adresi minimum 6, maksimum 30 karakter olmalıdır
+            }
+            if (!regex.test(email)) {
+                return false; // Geçersiz e-posta adresi formatı
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

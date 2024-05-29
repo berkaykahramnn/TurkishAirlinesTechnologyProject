@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Exchange Success</title>
+    <script th:inline="javascript">
+        var countdown = 5;
+        var redirectTimer = setInterval(function() {
+            countdown--;
+            if (countdown <= 0) {
+                clearInterval(redirectTimer);
+                window.location.href = /*[[ @{/wallet/{userId}(userId=${wallet.user.id}) }]]*/ '';
+            }
+            document.getElementById('countdown').innerText = countdown;
+        }, 1000); // Her saniye sayacı azalt
+    </script>
+</head>
+<body>
+    <h1>Exchange successful!</h1>
+    <h2><p>You have successfully exchanged your currency.</p></h2>
+    <h3><p>Redirecting to wallet page after <span id="countdown">5</span> seconds...</p></h3>
+</body>
+</html>

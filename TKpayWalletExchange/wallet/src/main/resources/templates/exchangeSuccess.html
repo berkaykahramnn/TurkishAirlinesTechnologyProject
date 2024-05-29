@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Exchange Success</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* Orta hizalamak için */
+      body {
+        background-color: #f8f9fa; /* Arka plan rengi */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .card {
+        width: 600px;
+        text-align: center;
+        padding: 20px;
+        background-color: #ffffff; /* Card arka plan rengi */
+        border-radius: 10px; /* Card kenar yuvarlaklığı */
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Card gölge efekti */
+      }
+
+      .card-header {
+        background-color: #28a745; /* Başlık arka plan rengi */
+        color: #ffffff; /* Başlık yazı rengi */
+        border-radius: 5px; /* Başlık kenar yuvarlaklığı */
+        padding: 10px 0; /* Başlık iç boşluk */
+        margin-bottom: 20px; /* Başlık alt boşluk */
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        font-family: "Arial", sans-serif; /* Yazı fontu */
+      }
+
+      #countdown {
+        font-size: 24px; /* Countdown font büyüklüğü */
+        font-weight: bold; /* Countdown font kalınlığı */
+        color: #dc3545; /* Countdown renk */
+      }
+    </style>
+    <script th:inline="javascript">
+      var countdown = 5;
+      var redirectTimer = setInterval(function () {
+        countdown--;
+        if (countdown <= 0) {
+          clearInterval(redirectTimer);
+          window.location.href =
+            /*[[ @{/wallet/{userId}(userId=${wallet.user.id}) }]]*/ "";
+        }
+        document.getElementById("countdown").innerText = countdown;
+      }, 1000); // Her saniye sayacı azalt
+    </script>
+  </head>
+
+  <body>
+    <div class="card">
+      <div class="card-header">
+        <h1>Exchange successful!</h1>
+      </div>
+      <h2><p>You have successfully exchanged your currency.</p></h2>
+      <h3>
+        <p>
+          Redirecting to wallet page after
+          <span id="countdown">5</span> seconds...
+        </p>
+      </h3>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Success</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="success.css" rel="stylesheet"> <!-- Harici CSS dosyası -->
+    <script th:inline="javascript">
+        var countdown = 5;
+        var redirectTimer = setInterval(function() {
+            countdown--;
+            if (countdown <= 0) {
+                clearInterval(redirectTimer);
+                window.location.href = /*[[ @{/wallet/{userId}(userId=${wallet.user.id})} ]]*/ '';
+            }
+            document.getElementById('countdown').innerText = countdown;
+        }, 1000); // Her saniye sayacı azalt
+    </script>
+</head>
+<body>
+    <div class="overlay"></div> <!-- Overlay eklemesi -->
+    <div class="card text-center">
+        <div class="card-header text-white">
+            <h1>Registration Success!</h1>
+        </div>
+        <div class="card-body">
+            <div class="container">
+                <table class="table table-bordered">
+                    <tbody>
+                        <tr>
+                            <td class="text-right"><strong>Owner:</strong></td>
+                            <td class="text-left"><span th:text="${wallet.user.username}"></span></td>
+                            <td class="text-right"><strong>Email:</strong></td>
+                            <td class="text-left"><span th:text="${wallet.user.email}"></span></td>
+                        </tr>
+                        <tr>
+                            <td class="text-right"><strong>Currency:</strong></td>
+                            <td class="text-left"><span th:text="${wallet.currency}"></span></td>
+                            <td class="text-right"><strong>Balance:</strong></td>
+                            <td class="text-left"><span th:text="${wallet.balance}"></span> <span th:text="${wallet.currency}"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h3 class="mt-4"><p>Redirecting to user page after <span id="countdown">5</span> seconds...</p></h3>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <script th:inline="javascript">
+        setTimeout(function() {
+            var userId = /*[[${wallet.user.id}]]*/ null;
+            if (userId != null) {
+                window.location.href = "/user/" + userId;
+            }
+        }, 5000);
+    </script>
+</body>
+</html>

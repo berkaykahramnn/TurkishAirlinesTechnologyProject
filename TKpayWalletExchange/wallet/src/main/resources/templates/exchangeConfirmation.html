@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Exchange Confirmation</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* Orta hizalamak için */
+      body {
+        background-color: rgba(128, 128, 128, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .card {
+        width: 400px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="card">
+      <div class="card-body">
+        <h2 class="card-title">Exchange Confirmation</h2>
+        <table class="table">
+          <tbody>
+            <tr>
+              <th scope="row">User:</th>
+              <td><span th:text="${user.username}"></span></td>
+            </tr>
+            <tr>
+              <th scope="row">Current Balance:</th>
+              <td>
+                <span th:text="${wallet.balance}"></span>
+                <span th:text="${wallet.currency}"></span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Selected Currency:</th>
+              <td><span th:text="${currency}"></span></td>
+            </tr>
+            <tr>
+              <th scope="row">Exchange Rate:</th>
+              <td><span th:text="${exchangeRate}"></span></td>
+            </tr>
+            <tr>
+              <th scope="row">New Balance After Exchange:</th>
+              <td>
+                <span th:text="${newBalance}"></span>
+                <span th:text="${currency}"></span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Geri sayım -->
+        <div id="countdown">Second Left: <span id="timer"></span></div>
+
+        <!-- Onay butonu -->
+        <div class="d-flex justify-content-between">
+          <form action="/exchangeConfirm" method="post">
+            <input type="hidden" name="userId" th:value="${user.id}" />
+            <input type="hidden" name="currency" th:value="${currency}" />
+            <input type="hidden" name="newBalance" th:value="${newBalance}" />
+            <button type="submit" class="btn btn-danger">
+              Confirm Exchange
+            </button>
+          </form>
+          <form th:action="@{/wallet/{userId}(userId=${user.id})}" method="get">
+            <button class="btn bg-danger text-white">Undo</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script th:inline="javascript">
+      // Geri sayım fonksiyonu
+      function startCountdown(duration, display) {
+        var timer = duration,
+          minutes,
+          seconds;
+        setInterval(function () {
+          minutes = parseInt(timer / 60, 10);
+          seconds = parseInt(timer % 60, 10);
+
+          minutes = minutes < 10 ? "0" + minutes : minutes;
+          seconds = seconds < 10 ? "0" + seconds : seconds;
+
+          display.textContent = minutes + ":" + seconds;
+
+          if (--timer < 0) {
+            timer = duration;
+            var userId = /*[[${wallet.user.id}]]*/ null;
+            if (userId != null) {
+              window.location.href = "/wallet/" + userId;
+            }
+          }
+        }, 1000);
+      }
+
+      window.onload = function () {
+        var oneMinute = 120, // 5 dakika (dakika * saniye)
+          display = document.querySelector("#timer");
+        startCountdown(oneMinute, display);
+      };
+    </script>
+  </body>
+</html>

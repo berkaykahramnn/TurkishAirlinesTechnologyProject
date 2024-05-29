@@ -1,0 +1,45 @@
+body {
+    background-image: url('./thy.png'); /* Arka plan resmi */
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative; /* Overlay'ın pozisyonu için */
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Saydam siyah overlay */
+    z-index: -1; /* Arkaplan resminin altında kalması için */
+}
+
+.card {
+    max-width: 700px;
+    width: 100%;
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.card-header {
+    background-color: #4CAF50; /* Daha yumuşak yeşil */
+}
+.card-header h1 {
+    font-size: 1.75rem;
+}
+.table-bordered {
+    margin-bottom: 0;
+}
+.table-bordered th, .table-bordered td {
+    border: 1px solid #ddd; /* Daha yumuşak kenarlık rengi */
+}
+.table-bordered td {
+    vertical-align: middle;
+}
